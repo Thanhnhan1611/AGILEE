@@ -1,0 +1,48 @@
+﻿@model WebBanHang.ViewModels.RegisterViewModel
+<h2>Đăng ký</h2>
+
+<div style="color:red">
+    @Html.ValidationSummary(false)
+</div>
+
+@if (ViewBag.Error != null)
+{
+    <div style="color:red">@ViewBag.Error</div>
+}
+
+<form asp-action="Register" method="post">
+    <div>
+        <label>Họ và tên</label><br />
+        <input asp-for="FullName" class="form-control" />
+        <span asp-validation-for="FullName" style="color:red"></span>
+    </div>
+    <br />
+    <div>
+        <label>Email</label><br />
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" style="color:red"></span>
+    </div>
+    <br />
+    <div>
+        <label>Mật khẩu</label><br />
+        <input asp-for="Password" type="password" class="form-control" />
+        <span asp-validation-for="Password" style="color:red"></span>
+    </div>
+    <br />
+    <div>
+        <label>Xác nhận mật khẩu</label><br />
+        <input asp-for="ConfirmPassword" type="password" class="form-control" />
+        <span asp-validation-for="ConfirmPassword" style="color:red"></span>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">Đăng ký</button>
+</form>
+
+@if (TempData["Success"] != null)
+{
+    <p style="color:green">@TempData["Success"]</p>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

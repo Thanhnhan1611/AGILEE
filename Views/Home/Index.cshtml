@@ -1,0 +1,148 @@
+﻿@using Microsoft.AspNetCore.Http
+@model IEnumerable<WebBanHang.Models.TbPorduct>
+@{
+    ViewData["Title"] = "Trang chủ";
+    var brands = ViewBag.Brands as IEnumerable<WebBanHang.Models.TbBrand>;
+    var categories = ViewBag.Categories as IEnumerable<WebBanHang.Models.TbProductCategory>;
+    
+    // Kiểm tra trạng thái đăng nhập từ Session
+    var isLoggedIn = Context.Session.GetString("Username") != null ? "true" : "false";
+}
+
+@* --- Banner --- *@
+<div class="p-5 mb-5 bg-light rounded-3 shadow-sm position-relative overflow-hidden" style="background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);">
+    <div class="container-fluid py-4 position-relative z-index-1">
+        <h1 class="display-4 fw-bold text-primary">Săn Sale Bùng Nổ! 🔥</h1>
+        <p class="col-md-8 fs-5 text-muted">Từ thiết bị công nghệ đỉnh cao đến xu hướng thời trang mới nhất.</p>
+        <button class="btn btn-primary btn-lg mt-3 shadow" type="button">Khám phá ngay</button>
+    </div>
+</div>
+
+@* --- Thanh tìm kiếm --- *@
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <form asp-controller="Home" asp-action="SearchProduct" method="get" class="p-3 bg-white shadow-sm rounded-pill d-flex align-items-center border">
+                <i class="bi bi-search ms-3 text-muted"></i>
+                <input type="text" name="tensp" class="form-control border-0 shadow-none bg-transparent ps-3" 
+                       placeholder="Bạn đang tìm kiếm sản phẩm gì hôm nay?" 
+                       value="@ViewBag.TuKhoa" />
+                <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold">Tìm kiếm</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* --- Danh sách sản phẩm --- *@
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-warning text-center mx-auto" style="max-width: 500px;">
+        <h4 class="fw-bold">Opps! Cửa hàng đang trống.</h4>
+        <p>Hiện tại chúng tôi đang cập nhật các mặt hàng mới.</p>
+    </div>
+}
+else
+{
+    <div class="mb-5 container">
+        <div class="d-flex justify-content-between align-items-end mb-4 border-bottom pb-2">
+            <h2 class="fw-bold text-dark mb-0">💻 Đồ Công Nghệ Xu Hướng</h2>
+        </div>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            @foreach (var item in Model)
+            {
+                var brandName = brands?.FirstOrDefault(b => b.Id == item.BrainId)?.Name ?? "Khác";
+                
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0 product-card">
+                        <span class="position-absolute top-0 end-0 badge bg-danger m-2">-15%</span>
+                        
+                        <a href="/Home/ProductDetail/@item.ProductId">
+                            <img src="@(string.IsNullOrEmpty(item.Image) ? "https://via.placeholder.com/300x300?text=No+Image" : item.Image)" 
+                                 class="card-img-top p-3" 
+                                 alt="@item.Name" 
+                                 style="object-fit: contain; height: 200px;">
+                        </a>
+
+                        <div class="card-body d-flex flex-column">
+                            <span class="badge bg-secondary mb-2 align-self-start">@brandName</span>
+                            <h5 class="card-title fw-bold text-dark">@item.Name</h5>
+
+                            <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                                <span class="text-danger fw-bold fs-5">@string.Format("{0:#,##0} đ", item.Price)</span>
+                                <div class="d-flex gap-1">
+                                    
+                                    <a href="/Home/ProductDetail/@item.ProductId" class="btn btn-outline-info btn-sm rounded-pill fw-bold px-3">
+                                        Chi tiết ℹ️
+                                    </a>
+
+                                    @* ĐÃ TÍCH HỢP: Kiểm tra đăng nhập trước khi gọi hàm thêm vào giỏ *@
+                                    <button class="btn btn-outline-primary btn-sm rounded-pill fw-bold px-3" 
+                                            onclick="handleAddToCart(@item.ProductId, '@item.Name', @isLoggedIn)">
+                                        Thêm 🛒
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@* --- Script xử lý Giỏ hàng --- *@
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Hàm kiểm tra đăng nhập trước khi thực hiện
+        function handleAddToCart(id, name, isLoggedIn) {
+            if (!isLoggedIn) {
+                Swal.fire({
+                    title: 'Yêu cầu đăng nhập',
+                    text: 'Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!',
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonColor: '#0d6efd',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Đăng nhập ngay',
+                    cancelButtonText: 'Để sau'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Chuyển hướng đến trang đăng nhập của bạn
+                        window.location.href = '/Login/Index';
+                    }
+                });
+            } else {
+                // Nếu đã đăng nhập, tiến hành gọi hàm thêm hàng
+                actualAddToCart(id, name);
+            }
+        }
+
+        // Hàm thực thi thêm sản phẩm vào database/session
+        function actualAddToCart(id, name) {
+            fetch('/Home/AddToCart?id=' + id)
+                .then(response => {
+                    if (response.ok) {
+                        Swal.fire({
+                            title: 'Tuyệt vời!',
+                            text: 'Đã thêm ' + name + ' vào giỏ hàng.',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false,
+                            position: 'top-end',
+                            toast: true
+                        });
+                        
+                        // Bạn có thể reload trang hoặc cập nhật số lượng badge giỏ hàng tại đây nếu cần
+                        // location.reload();
+                    } else {
+                        Swal.fire('Thất bại', 'Có lỗi xảy ra khi thêm vào giỏ.', 'error');
+                    }
+                })
+                .catch(err => {
+                    console.error("Lỗi:", err);
+                    Swal.fire('Lỗi kết nối', 'Không thể kết nối tới máy chủ.', 'error');
+                });
+        }
+    </script>
+}

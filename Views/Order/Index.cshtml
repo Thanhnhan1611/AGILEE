@@ -1,0 +1,56 @@
+﻿@model IEnumerable<WebBanHang.Models.TbPorduct>
+
+<table class="table table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Mã SP</th>
+            <th>Tên sản phẩm</th>
+            <th>Giá bán</th>
+            <th class="text-center">Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ProductId</td>
+                <td>@item.Name</td>
+                <td class="text-danger fw-bold">@item.Price?.ToString("N0") VNĐ</td>
+                <td class="text-center">
+                    <a asp-action="ProductDetail" asp-route-id="@item.ProductId" class="btn btn-sm btn-primary">
+                        <i class="bi bi-eye"></i> Xem
+                    </a>
+
+                    <button class="btn btn-sm btn-success" 
+                            onclick="ajaxAddToCart(@item.ProductId, '@item.Name')">
+                        <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function ajaxAddToCart(id, name) {
+            // Gửi yêu cầu ngầm (AJAX) đến Server để thêm vào giỏ mà không load lại trang
+            fetch(`/Home/AddToCart?id=${id}`)
+                .then(response => {
+                    if (response.ok) {
+                        Swal.fire({
+                            title: 'Tuyệt vời!',
+                            text: `Đã thêm ${name} vào giỏ hàng thành công.`,
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        Swal.fire('Lỗi', 'Không thể thêm sản phẩm này.', 'error');
+                    }
+                })
+                .catch(err => console.error(err));
+        }
+    </script>
+}

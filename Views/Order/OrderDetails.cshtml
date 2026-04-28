@@ -1,0 +1,41 @@
+﻿@model WebBanHang.Models.TbOrder
+
+<div class="container mt-5">
+    <h2>Chi tiết đơn hàng #@Model.OrderId</h2>
+    <p>Ngày đặt: @Model.Orderdate</p>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Tên sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Giá</th>
+                <th>Thành tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.TbOrderDetails != null && Model.TbOrderDetails.Any())
+            {
+                @foreach (var item in Model.TbOrderDetails)
+                {
+                    <tr>
+                        @* Hiển thị tên từ bảng liên kết Product *@
+                        <td>@item.Product?.Name</td>
+                        
+                        @* Phải viết là Quanlity (có chữ n) theo DB của bạn *@
+                        <td>@item.Quanlity</td> 
+                        
+                        <td>@item.Price</td>
+                        <td>@(item.Price * item.Quanlity)</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" class="text-center">Không có dữ liệu sản phẩm cho đơn hàng này.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

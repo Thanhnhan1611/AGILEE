@@ -1,0 +1,56 @@
+﻿@model WebBanHang.Models.TbPorduct
+@{
+    ViewData["Title"] = "Chỉnh sửa sản phẩm";
+}
+
+<div class="container mt-4">
+    <div class="card shadow border-0">
+        <div class="card-header bg-warning text-dark py-3">
+            <h4 class="mb-0">✏️ Chỉnh sửa sản phẩm</h4>
+        </div>
+        <div class="card-body p-4">
+            <form asp-action="EditProduct" method="post">
+                @* Cực kỳ quan trọng: Phải có ProductId ẩn để Controller biết sửa sản phẩm nào *@
+                <input type="hidden" asp-for="ProductId" />
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tên sản phẩm</label>
+                    <input asp-for="Name" class="form-control" placeholder="Nhập tên sản phẩm..." required />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Giá bán (VNĐ)</label>
+                        <input asp-for="Price" class="form-control" type="number" required />
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+
+                    @* PHẦN SỐ LƯỢNG ĐÃ ĐƯỢC ĐƯA VÀO ĐÂY *@
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Số lượng tồn kho</label>
+                        <input asp-for="Quanlity" type="number" class="form-control" min="0" required />
+                        <span asp-validation-for="Quanlity" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Link hình ảnh</label>
+                        <input asp-for="Image" class="form-control" placeholder="URL hình ảnh..." />
+                        <span asp-validation-for="Image" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Mô tả chi tiết</label>
+                    <textarea asp-for="Detail" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="Detail" class="text-danger"></span>
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-warning fw-bold px-4">Lưu thay đổi</button>
+                    <a asp-action="ManageProducts" class="btn btn-secondary px-4">Hủy bỏ</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

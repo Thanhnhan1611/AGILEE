@@ -1,0 +1,65 @@
+﻿<h2>Thanh toán</h2>
+<form method="post" id="checkoutForm">
+    <div>
+        <label>Họ tên <span style="color:red">*</span></label>
+        <input name="fullName" id="fullName" class="form-control" />
+        <span id="err-fullName" class="text-danger" style="font-size:12px;display:none;"></span>
+    </div>
+    <div>
+        <label>SĐT <span style="color:red">*</span></label>
+        <input name="phone" id="phone" class="form-control" maxlength="10" inputmode="numeric" />
+        <span id="err-phone" class="text-danger" style="font-size:12px;display:none;"></span>
+    </div>
+    <div>
+        <label>Địa chỉ <span style="color:red">*</span></label>
+        <input name="address" id="address" class="form-control" />
+        <span id="err-address" class="text-danger" style="font-size:12px;display:none;"></span>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-success">Đặt hàng</button>
+</form>
+
+<script>
+    // Chỉ cho phép nhập số ở ô SĐT
+    document.getElementById('phone').addEventListener('input', function () {
+        this.value = this.value.replace(/\D/g, '').slice(0, 10);
+    });
+
+    document.getElementById('checkoutForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById('fullName').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const address = document.getElementById('address').value.trim();
+        let valid = true;
+
+        // Reset lỗi
+        ['fullName', 'phone', 'address'].forEach(id => {
+            document.getElementById('err-' + id).style.display = 'none';
+        });
+
+        if (!name) {
+            showErr('fullName', 'Vui lòng nhập họ tên');
+            valid = false;
+        }
+        if (!phone) {
+            showErr('phone', 'Vui lòng nhập số điện thoại');
+            valid = false;
+        } else if (!/^\d{10}$/.test(phone)) {
+            showErr('phone', 'Số điện thoại phải đúng 10 chữ số');
+            valid = false;
+        }
+        if (!address) {
+            showErr('address', 'Vui lòng nhập địa chỉ');
+            valid = false;
+        }
+
+        if (valid) this.submit(); // submit thật nếu hợp lệ
+    });
+
+    function showErr(id, msg) {
+        const el = document.getElementById('err-' + id);
+        el.textContent = msg;
+        el.style.display = 'block';
+    }
+</script>

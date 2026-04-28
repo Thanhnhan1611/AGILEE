@@ -1,0 +1,31 @@
+﻿@model WebBanHang.Models.TbCustomer
+@{
+    ViewData["Title"] = "Thông tin cá nhân";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm border-0 mx-auto" style="max-width: 600px;">
+        <div class="card-header bg-primary text-white text-center py-3">
+            <h4><i class="bi bi-person-badge"></i> HỒ SƠ CỦA BẠN</h4>
+        </div>
+        <div class="card-body p-4">
+            <div class="mb-3">
+                <label class="fw-bold text-muted">Họ và tên</label>
+                <p class="fs-5 border-bottom pb-2">@Model.Name</p> @* Kiểm tra nếu lỗi thì đổi thành @Model.Name *@
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold text-muted">Email</label>
+                <p class="fs-5 border-bottom pb-2">@Model.Email</p>
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold text-muted">Số điện thoại</label>
+                <p class="fs-5 border-bottom pb-2">@(Model.Phone ?? "Chưa cập nhật")</p>
+            </div>
+            <div class="text-center mt-4">
+                <a href="/Order/History" class="btn btn-outline-danger px-4 rounded-pill">
+                    <i class="bi bi-list-check"></i> Xem lịch sử mua hàng
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

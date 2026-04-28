@@ -1,0 +1,84 @@
+﻿@model IEnumerable<WebBanHang.Models.CartItem>
+
+<div class="container mt-5">
+    <h2 class="mb-4"><i class="bi bi-cart3"></i> Giỏ hàng của bạn</h2>
+    
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th style="width: 150px;" class="text-center">Số lượng</th>
+                        <th class="text-end">Giá</th>
+                        <th class="text-end">Thành tiền</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="@item.Hinh" alt="@item.TenHh" style="width: 50px; height: 50px; object-fit: cover;" class="rounded me-3 border">
+                                        <span class="fw-bold">@item.TenHh</span>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-light text-dark border px-3 py-2">@item.SoLuong</span>
+                                </td>
+                                <td class="text-end">@item.DonGia.ToString("#,##0") đ</td>
+                                <td class="text-end text-danger fw-bold">@item.ThanhTien.ToString("#,##0") đ</td>
+                                <td class="text-center">
+                                    @* NÚT XÓA ĐÃ ĐƯỢC SỬA: Gọi đến hàm RemoveCart trong HomeController *@
+                                    <a asp-controller="Home" 
+                                       asp-action="RemoveCart" 
+                                       asp-route-id="@item.MaHh" 
+                                       class="btn btn-sm btn-outline-danger"
+                                       onclick="return confirm('Bạn có muốn xóa sản phẩm này khỏi giỏ hàng?')">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <i class="bi bi-cart-x display-1 text-muted"></i>
+                                <p class="text-muted mt-3">Giỏ hàng của bạn đang trống!</p>
+                                <a href="/" class="btn btn-primary">Quay lại mua sắm ngay</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row mt-4 mb-5">
+            <div class="col-md-6">
+                <a href="/" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Tiếp tục mua sắm
+                </a>
+            </div>
+            <div class="col-md-6 text-end">
+                <div class="mb-3">
+                    <h4 class="d-inline">Tổng cộng: </h4>
+                    <h4 class="d-inline text-danger">@Model.Sum(x => x.ThanhTien).ToString("#,##0") đ</h4>
+                </div>
+                
+                @* NÚT THANH TOÁN: Chuyển hướng đến trang Checkout *@
+                <a asp-controller="Home" asp-action="Checkout" class="btn btn-success btn-lg px-5 shadow rounded-pill">
+                    Thanh toán <i class="bi bi-credit-card ms-2"></i>
+                </a>
+            </div>
+        </div>
+    }
+</div>

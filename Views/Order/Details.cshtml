@@ -1,0 +1,70 @@
+﻿@model WebBanHang.Models.Order
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">CHI TIẾT ĐƠN HÀNG #@Model.OrderID</h4>
+        </div>
+        
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6 border-end">
+                    <h5 class="text-primary"><i class="bi bi-person-fill"></i> Thông tin khách hàng</h5>
+                    <hr />
+                    <p><strong>Người nhận:</strong> @Model.CustomerName</p>
+                    <p><strong>Điện thoại:</strong> @Model.Phone</p>
+                    <p><strong>Địa chỉ:</strong> @Model.Address</p>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="text-primary"><i class="bi bi-info-circle-fill"></i> Trạng thái đơn hàng</h5>
+                    <hr />
+                    <p><strong>Ngày đặt:</strong> @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+                    <p><strong>Tình trạng:</strong> <span class="badge bg-success">@Model.Status</span></p>
+                </div>
+            </div>
+
+            <h5 class="text-primary mb-3">Sản phẩm trong đơn hàng</h5>
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr class="text-center">
+                        <th>Tên sản phẩm</th>
+                        <th>Số lượng</th>
+                        <th>Đơn giá</th>
+                        <th>Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Products != null && Model.Products.Count > 0)
+                    {
+                        foreach (var item in Model.Products)
+                        {
+                            <tr>
+                                <td>@item.ProductName</td>
+                                <td class="text-center">@item.Quantity</td>
+                                <td class="text-end">@item.Price.ToString("N0") đ</td>
+                                <td class="text-end">@((item.Quantity * item.Price).ToString("N0")) đ</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center text-danger">Không có thông tin sản phẩm!</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="3" class="text-end">Tổng cộng thanh toán:</th>
+                        <th class="text-end text-danger fs-5">@Model.TotalAmount.ToString("N0") VNĐ</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="card-footer bg-light text-end">
+            <a href="/Order/Index" class="btn btn-secondary">Quay lại danh sách</a>
+            <button class="btn btn-dark" onclick="window.print()">In đơn hàng</button>
+        </div>
+    </div>
+</div>

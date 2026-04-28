@@ -1,0 +1,123 @@
+﻿@model WebBanHang.Models.TbPorduct
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="container my-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+            <li class="breadcrumb-item active">Chi tiết sản phẩm</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        @* --- Cột bên trái: Hình ảnh --- *@
+        <div class="col-md-6 mb-4">
+            <div class="card border-0 shadow-sm p-3">
+                <img src="@Model.Image" class="img-fluid rounded shadow-sm" alt="@Model.Name" style="max-height: 500px; object-fit: contain;">
+            </div>
+        </div>
+
+        @* --- Cột bên phải: Thông tin cơ bản & Nút mua --- *@
+        <div class="col-md-6">
+            <h1 class="fw-bold text-dark mb-3">@Model.Name</h1>
+            <div class="d-flex align-items-center mb-3">
+                <span class="badge bg-success me-2">Còn hàng</span>
+                <span class="text-muted small">Mã SP: #@Model.ProductId</span>
+            </div>
+            
+            <h2 class="text-danger fw-bold mb-4">@string.Format("{0:#,##0} đ", Model.Price)</h2>
+
+            <div class="bg-light p-3 rounded mb-4">
+                <p class="mb-1"><i class="bi bi-truck me-2"></i> Miễn phí vận chuyển toàn quốc</p>
+                <p class="mb-0"><i class="bi bi-shield-check me-2"></i> Bảo hành chính hãng 12 tháng</p>
+            </div>
+
+            <div class="d-grid gap-2">
+                @* Nút Thêm vào giỏ hàng *@
+                <button class="btn btn-primary btn-lg py-3 fw-bold" onclick="addToCart(@Model.ProductId, '@Model.Name')">
+                    THÊM VÀO GIỎ HÀNG 🛒
+                </button>
+                @* Nút Mua ngay *@
+                <button class="btn btn-outline-danger btn-lg py-3 fw-bold" onclick="buyNow(@Model.ProductId, '@Model.Name')">
+                    MUA NGAY
+                </button>
+            </div>
+        </div>
+    </div>
+
+    @* --- Phần dưới: Thông tin chi tiết --- *@
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h4 class="mb-0 fw-bold">Mô tả chi tiết sản phẩm</h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="product-description" style="line-height: 1.8;">
+                        @if (!string.IsNullOrEmpty(Model.Detail))
+                        {
+                            @Html.Raw(Model.Detail)
+                        }
+                        else
+                        {
+                            <p class="text-muted">Đang cập nhật thông tin chi tiết cho sản phẩm này...</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .product-description p { margin-bottom: 1rem; }
+    .product-description strong { color: #333; }
+</style>
+
+@* --- Script xử lý thêm hàng và mua ngay --- *@
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // 1. Hàm Thêm vào giỏ hàng (Ở lại trang, hiện thông báo)
+        function addToCart(id, name) {
+            fetch('/Home/AddToCart?id=' + id)
+                .then(response => {
+                    if (response.ok) {
+                        Swal.fire({
+                            title: 'Thành công!',
+                            text: 'Sản phẩm ' + name + ' đã được thêm vào giỏ hàng.',
+                            icon: 'success',
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            // Tải lại trang để cập nhật số lượng trên Header Layout
+                            location.reload(); 
+                        });
+                    } else {
+                        Swal.fire('Lỗi', 'Không thể thêm sản phẩm vào giỏ hàng.', 'error');
+                    }
+                })
+                .catch(err => {
+                    console.error("Lỗi kết nối:", err);
+                });
+        }
+
+        // 2. Hàm Mua ngay (Thêm xong chuyển thẳng tới trang Cart)
+        function buyNow(id, name) {
+            fetch('/Home/AddToCart?id=' + id)
+                .then(response => {
+                    if (response.ok) {
+                        // Chuyển hướng ngay lập tức đến trang Giỏ hàng
+                        window.location.href = '/Home/Cart';
+                    } else {
+                        Swal.fire('Lỗi', 'Không thể xử lý yêu cầu mua ngay.', 'error');
+                    }
+                })
+                .catch(err => {
+                    console.error("Lỗi kết nối:", err);
+                });
+        }
+    </script>
+}

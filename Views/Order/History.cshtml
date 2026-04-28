@@ -1,0 +1,95 @@
+﻿@model IEnumerable<WebBanHang.Models.TbOrder>
+@{
+    ViewData["Title"] = "Lịch sử mua hàng";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-dark text-white py-3">
+            <h4 class="mb-0"><i class="bi bi-clock-history me-2"></i>Lịch sử đơn hàng của bạn</h4>
+        </div>
+        <div class="card-body p-0">
+            @if (Model == null || !Model.Any())
+            {
+                <div class="text-center p-5">
+                    <h5 class="text-muted">Bạn chưa có đơn hàng nào.</h5>
+                    <a href="@Url.Action("Index", "Home")" class="btn btn-primary mt-3">Mua sắm ngay</a>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">Mã đơn</th>
+                                <th>Ngày đặt</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                                <th class="text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="ps-3"><span class="fw-bold text-primary">#@item.OrderId</span></td>
+                                    <td>@(item.Orderdate?.ToString("dd/MM/yyyy HH:mm"))</td>
+                                    
+                                    <td class="text-danger fw-bold">
+                                        @((item.TbOrderDetails?.Sum(x => x.Price * x.Quanlity) ?? 0).ToString("#,##0")) đ
+                                    </td>
+                                    
+                                    <td>
+                                        @* SỬA LOGIC HIỂN THỊ TRẠNG THÁI TẠI ĐÂY *@
+                                        @if (item.Status == 0)
+                                        {
+                                            <span class="badge bg-secondary">Đã hủy</span>
+                                        }
+                                        else if (item.Status == 1)
+                                        {
+                                            <span class="badge bg-warning text-dark">Chờ xác nhận</span>
+                                        }
+                                        else if (item.Status == 2)
+                                        {
+                                            <span class="badge bg-info text-dark">Đang giao hàng</span>
+                                        }
+                                        else if (item.Status == 3)
+                                        {
+                                            <span class="badge bg-success">Đã giao thành công</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-light text-dark">Khác</span>
+                                        }
+                                    </td>
+
+                                    <td class="text-center">
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <a href="/Order/DetailsHistory/@item.OrderId" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                                Chi tiết
+                                            </a>
+
+                                            @* Nút Hủy đơn hàng - Chỉ hiện khi trạng thái là Chờ xác nhận (1) *@
+                                            @if (item.Status == 1)
+                                            {
+                                                <form asp-action="CancelOrder" asp-controller="Home" method="post" 
+                                                      onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng #@item.OrderId không?')">
+                                                    @* Đảm bảo truyền đúng ID *@
+                                                    <input type="hidden" name="id" value="@item.OrderId" />
+                                                    <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3">
+                                                        Hủy đơn
+                                                    </button>
+                                                </form>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

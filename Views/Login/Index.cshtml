@@ -1,0 +1,45 @@
+﻿@{
+    ViewData["Title"] = "Đăng Nhập";
+}
+
+<style>
+    /* CSS làm giao diện Đỏ - Trắng chuyên nghiệp */
+    .auth-wrapper { min-height: 80vh; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa; }
+    .auth-card { background-color: #ffffff; border-top: 5px solid #e63946; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 40px; width: 100%; max-width: 400px; }
+    .btn-red { background-color: #e63946; color: #ffffff; border: none; font-weight: bold; width: 100%; padding: 10px; border-radius: 5px; transition: 0.3s; }
+    .btn-red:hover { background-color: #c1121f; }
+    .text-red { color: #e63946; }
+</style>
+
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h2 class="text-center text-red fw-bold mb-4">ĐĂNG NHẬP</h2>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger text-center py-2" style="font-size: 0.9rem;">@ViewBag.Error</div>
+        }
+
+        <form method="post" asp-action="Index">
+            <div class="mb-3">
+                <label class="form-label fw-bold">Email tài khoản</label>
+                <input type="email" name="email" class="form-control" placeholder="Nhập email của bạn..." required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Mật khẩu</label>
+                <input type="password" name="password" class="form-control" placeholder="********" required />
+                <div class="text-end mt-1">
+                    <a href="/Login/ForgotPassword" class="text-decoration-none text-muted small">Quên mật khẩu?</a>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-red mt-2">ĐĂNG NHẬP</button>
+
+            <div class="text-center mt-4">
+                <span class="text-muted">Chưa có tài khoản?</span> 
+                <a href="/Login/Register" class="text-decoration-none text-red fw-bold">Đăng ký ngay</a>
+            </div>
+        </form>
+    </div>
+</div>
